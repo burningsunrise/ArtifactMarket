@@ -109,6 +109,6 @@ try:
     while True:
         print("Started polling data!")
         main()
-        time.sleep(60)
+        time.sleep(240)
 except KeyboardInterrupt:
     print("Stopped polling data!")
