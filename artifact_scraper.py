@@ -78,7 +78,7 @@ def main():
         
 
     for i in range(len(common_card_hash)):
-        c.execute("""INSERT INTO common (name, sell_price, hash_name, sell_listings) VALUES(%s,%s,%s,%s) ON DUPLICATE KEY UPDATE sell_price=values(%s), sell_listings=values(%s)""", (common_name[i], common_sell_price[i], common_card_hash[i], common_sale_listings[i],common_sell_price[i], common_sale_listings[i],))
+        c.execute("""INSERT INTO common (name, sell_price, hash_name, sell_listings) VALUES(%s,%s,%s,%s) ON DUPLICATE KEY UPDATE sell_price=VALUES(%s), sell_listings=VALUES(%s)""", (common_name[i], common_sell_price[i], common_card_hash[i], common_sale_listings[i],common_sell_price[i], common_sale_listings[i],))
     print("Finished inserting commons")
     for i in range(len(uncommon_card_hash)):
         c.execute("""INSERT INTO uncommon (name, sell_price, hash_name, sell_listings) VALUES(%s,%s,%s,%s) ON DUPLICATE KEY UPDATE sell_price=values(%s), sell_listings=values(%s)""", (uncommon_name[i], uncommon_sell_price[i], uncommon_card_hash[i], uncommon_sale_listings[i], uncommon_sell_price[i], uncommon_sale_listings[i],))
