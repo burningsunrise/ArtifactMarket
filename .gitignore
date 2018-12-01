@@ -1,3 +1,5 @@
 config.py
 __pycache__
 db_conf.ini
+db.php
+card_data.php
