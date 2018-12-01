@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import urllib.request, json, datetime
 import time
 import MySQLdb
