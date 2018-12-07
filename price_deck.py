@@ -5,6 +5,7 @@ from contextlib import closing
 from bs4 import BeautifulSoup
 import urllib.request, json, datetime
 import pprint
+from collections import Counter
 
 # Lists
 market_name = []
@@ -87,12 +88,34 @@ def main():
     for data in inventory_data['rgDescriptions']:
         desc_name.append(data)
 
+    rg_name = []
+    for data in inventory_data['rgInventory']:
+        rg_name.append(data)
+
     # inventory shit
     inventory_name = []
     inventory_hash = []
+    inventory_classid = []
     for i in range(len(inventory_data['rgDescriptions'])):
         inventory_name.append(inventory_data['rgDescriptions'][desc_name[i]]['name'])
         inventory_hash.append(inventory_data['rgDescriptions'][desc_name[i]]['market_hash_name'])
+        inventory_classid.append(inventory_data['rgDescriptions'][desc_name[i]]['classid'])
+
+    rg_classid = []
+    for i in range(len(inventory_data['rgInventory'])):
+        rg_classid.append(inventory_data['rgInventory'][rg_name[i]]['classid'])
+
+
+    count_rgclassid = dict(Counter(rg_classid))
+    inventory_deck = dict(zip(inventory_classid, inventory_name))
+
+    final_inventory = {}
+    for k,v in count_rgclassid.items():
+        if k in inventory_deck:
+            final_inventory[inventory_deck[k]] = v
+
+
+
 
     deck_list = input("Give me that deck!: ")
     raw_html = simple_get(deck_list)
@@ -117,25 +140,32 @@ def main():
 
     deck = dict(zip(name, count))
 
-    total = 0
     get_market_data()
+    
+    dict_with_ints = dict((k,int(v)) for k,v in deck.items())
 
-    # TODO figure out inventory you have name and market hash
-    # Heroes are fine to do not in because there is only one
-    # We need quantity for inventorty for market_name
+    compared_decks = {x: dict_with_ints[x] - final_inventory[x] for x in dict_with_ints if x in final_inventory}
+
+    for key,value in dict_with_ints.items():
+        if key in compared_decks:
+            pass
+        else:
+            compared_decks[key] = value
+
+    finalized_deck = { k:v for k, v in compared_decks.items() if v > 0} # removes all False values, might want to change to if v != 0 or v > 0
+    total = 0
     for i in range(len(card_hash)):
         if card_hash[i] in heroes and card_hash[i] not in inventory_hash:
             print(market_name[i] + '=$' + str(sell_price[i]))
             total += float(sell_price[i])
-        if market_name[i] in deck:
-            print(market_name[i] + ' x' + deck[market_name[i]] + '=$' + str(round(float(deck[market_name[i]]) * float(sell_price[i]), 2)) + ' | SINGLE PRICE=$' + str(sell_price[i]))
-            total += round(float(deck[market_name[i]]) * float(sell_price[i]),2)
+        if market_name[i] in finalized_deck:
+            print(market_name[i] + ' x' + str(finalized_deck[market_name[i]]) + '=$' + str(round(float(finalized_deck[market_name[i]]) * float(sell_price[i]), 2)) + ' | SINGLE PRICE=$' + str(sell_price[i]))
+            total += round(float(finalized_deck[market_name[i]]) * float(sell_price[i]),2)
         
 
 
     print('=================')
     print("Total Deck Cost: " + str(total))
-    
 
 if __name__ == "__main__":
     main()
