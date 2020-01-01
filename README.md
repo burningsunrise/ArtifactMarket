@@ -8,10 +8,11 @@ There is also a scraper if you would like to have a history of all cards in a da
 ## Basic usage
 
 Requirements
-`requests
+```
+requests
 MySQLdb
 configparser
 bs4
 pprint
-`
+```
 After that simply run the script you want and be on your way!
